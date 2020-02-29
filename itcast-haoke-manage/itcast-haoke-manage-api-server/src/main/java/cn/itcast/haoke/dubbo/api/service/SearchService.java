@@ -102,6 +102,6 @@ public class SearchService {
                     }
                 });
 
-        return new SearchResult(housePage.getTotalPages(), housePage.getContent());
+        return new SearchResult(housePage.getTotalPages(), housePage.getContent(),null);
     }
 }
