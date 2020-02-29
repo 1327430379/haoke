@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -12,4 +13,6 @@ import java.util.List;
 public class SearchResult {
     private Integer totalPage;
     private List<HouseData> list;
+    private Set<String> hotWord;
+
 }
