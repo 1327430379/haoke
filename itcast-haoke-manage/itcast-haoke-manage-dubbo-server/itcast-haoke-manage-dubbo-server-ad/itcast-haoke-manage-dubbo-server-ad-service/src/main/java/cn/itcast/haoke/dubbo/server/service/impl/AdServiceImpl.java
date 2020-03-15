@@ -24,4 +24,5 @@ public class AdServiceImpl extends BaseServiceImpl<Ad> implements AdService {
         return new PageInfo(Long.valueOf(iPage.getTotal()).intValue(),page,pageSize
         ,iPage.getRecords());
     }
+
 }

@@ -3,16 +3,17 @@ schema {
 }
 
 type HaoKeQuery {
-   HouseResources(id:Long) :HouseResources
+    HouseResources(id:Long) :HouseResources
     HouseResourcesList(page:Int,pageSize:Int) :TableResult
     IndexAdList:IndexAdResult
+    MapHouseData(lng:Float,lat:Float,zoom:Int):MapHouseDataResult
 }
 
 
 
 
 type HouseResources {
-      id:Long!
+    id:Long!
     title:String
     estateId:Long
     buildingNum:String
@@ -55,4 +56,13 @@ type IndexAdResult {
 type IndexAdResultData {
     original:String
 }
+
+type MapHouseXY {
+    x:Float
+    y:Float
+}
+type MapHouseDataResult{
+    list:[MapHouseXY]
+}
+
 
