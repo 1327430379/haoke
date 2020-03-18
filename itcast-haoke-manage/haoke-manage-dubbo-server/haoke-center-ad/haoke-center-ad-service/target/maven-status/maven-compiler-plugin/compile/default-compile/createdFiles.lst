@@ -1,0 +1,6 @@
+cn\haoke\center\ad\mapper\AdMapper.class
+cn\haoke\center\ad\service\impl\AdServiceImpl.class
+cn\haoke\center\ad\service\AdService.class
+cn\haoke\center\ad\AdDubboProvider.class
+cn\haoke\center\ad\config\MybatisConfig.class
+cn\haoke\center\ad\apiimpl\ApiAdServiceImpl.class

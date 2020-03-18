@@ -1,0 +1,6 @@
+cn\haoke\center\house\vo\FangDongDetailVo.class
+cn\haoke\center\house\api\ApiFangDongService.class
+cn\haoke\center\house\pojo\HouseResources.class
+cn\haoke\center\house\pojo\FangDong.class
+cn\haoke\center\house\api\ApiHouseResourcesService.class
+cn\haoke\center\house\dto\FangDongReqDto.class
