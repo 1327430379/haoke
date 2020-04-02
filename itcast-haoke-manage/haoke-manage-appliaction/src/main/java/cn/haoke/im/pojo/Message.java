@@ -22,7 +22,6 @@ import java.util.Date;
 public class Message {
 
     @Id
-    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
     private String msg;
     /**

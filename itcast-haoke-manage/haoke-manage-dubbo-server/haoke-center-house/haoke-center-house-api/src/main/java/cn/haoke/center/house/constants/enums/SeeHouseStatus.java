@@ -6,8 +6,9 @@ public enum  SeeHouseStatus {
     WAIT_CONFIRM(0,"待确认"),
     WAIT_SEE_HOUSE(1,"待看房"),
     CANCELED(2,"已取消"),
-    FINISHED(3,"已完成");
-
+    FINISHED_HAS_SEE(3,"已完成看房"),
+    FINISHED_NOT_SEE(4,"已完成未看房"),
+    REFUSE_SEE_HOUSE(5,"拒绝看房");
     private Integer status;
 
     private String desc;

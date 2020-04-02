@@ -11,12 +11,5 @@
 
     <artifactId>haoke-center-ad-api</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.0.5</version>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
+
 </project>

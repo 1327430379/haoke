@@ -17,7 +17,7 @@ public class AdServiceImpl extends BaseServiceImpl<Ad> implements AdService {
         //排序
         queryWrapper.orderByDesc("update_time");
         //查询的条件
-        IPage iPage = super.queryPageList(queryWrapper, page, pageSize);
+        IPage iPage = super.queryPageList(null, page, pageSize);
         return new PageInfo(Long.valueOf(iPage.getTotal()).intValue(),page,pageSize
         ,iPage.getRecords());
     }

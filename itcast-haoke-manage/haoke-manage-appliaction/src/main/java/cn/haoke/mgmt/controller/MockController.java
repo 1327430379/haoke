@@ -2,16 +2,32 @@ package cn.haoke.mgmt.controller;
 
 import cn.haoke.mgmt.config.MockConfig;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
+import cn.haoke.mgmt.vo.WebResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("mock")
 @CrossOrigin
 public class MockController extends AbstractBaseController {
 
+
+    private final String HK_MK_FAQ = "HK_MK_FAQ";
+    private final String HK_MK_MENU = "HK_MK_MENU";
+    private final String HK_MK_AD = "HK_MK_AD";
+    private final String HK_MK_INFO = "HK_MK_INFO";
+    private final String HK_MK_HOUSE = "HK_MK_HOUSE";
     @Autowired
     private MockConfig mockConfig;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      *   * 菜单
@@ -20,8 +36,9 @@ public class MockController extends AbstractBaseController {
      *   
      */
     @GetMapping("index/menu")
-    public String indexMenu() {
-        return this.mockConfig.getIndexMenu();
+    public WebResult indexMenu() throws IOException {
+        String json = redisTemplate.opsForValue().get(HK_MK_MENU);
+        return handleData(json);
     }
 
     /**
@@ -30,8 +47,9 @@ public class MockController extends AbstractBaseController {
      *   
      */
     @GetMapping("index/info")
-    public String indexInfo() {
-        return this.mockConfig.getIndexInfo();
+    public WebResult indexInfo() {
+        String json = mockConfig.getIndexInfo();
+        return handleData(json);
     }
 
     /**
@@ -40,8 +58,9 @@ public class MockController extends AbstractBaseController {
      *   
      */
     @GetMapping("index/faq")
-    public String indexFaq() {
-        return this.mockConfig.getIndexFaq();
+    public WebResult indexFaq() {
+        String json = mockConfig.getIndexFaq();
+        return handleData(json);
     }
 
     /**
@@ -51,8 +70,9 @@ public class MockController extends AbstractBaseController {
      */
 
     @GetMapping("index/house")
-    public String indexHouse() {
-        return this.mockConfig.getIndexHouse();
+    public WebResult indexHouse() {
+        String json = mockConfig.getIndexHouse();
+        return handleData(json);
     }
 
     /**
@@ -63,16 +83,17 @@ public class MockController extends AbstractBaseController {
      *   
      */
     @GetMapping("infos/list")
-    public String infosList(@RequestParam("type") Integer type) {
+    public WebResult infosList(@RequestParam("type") Integer type) {
+        String json = null;
         switch (type) {
             case 1:
-                return this.mockConfig.getInfosList1();
+                json= this.mockConfig.getInfosList1();break;
             case 2:
-                return this.mockConfig.getInfosList2();
+                json= this.mockConfig.getInfosList2();break;
             case 3:
-                return this.mockConfig.getInfosList3();
+                json= this.mockConfig.getInfosList3();break;
         }
-        return this.mockConfig.getInfosList1();
+        return handleData(json);
     }
 
     /**
@@ -81,7 +102,23 @@ public class MockController extends AbstractBaseController {
      *   
      */
     @GetMapping("my/info")
-    public String myInfo() {
-        return this.mockConfig.getMy();
+    public WebResult myInfo() {
+        String json = mockConfig.getMy();
+        return handleData(json);
     }
+
+    private WebResult handleData(String json) {
+        Map map = null;
+        try {
+            map = objectMapper.readValue(json, Map.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map dataMap = (Map) map.get("data");
+        Map metaMap = (Map) map.get("meta");
+        WebResult webResult = WebResult.ok((List<?>) dataMap.get("list"));
+        webResult.setMeta(metaMap);
+        return webResult;
+    }
+
 }

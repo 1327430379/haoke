@@ -1,7 +1,17 @@
 package cn.haoke.mgmt.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.Serializable;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class NoticeMessageVo implements Serializable {
 
     /***
@@ -42,5 +52,5 @@ public class NoticeMessageVo implements Serializable {
     /***
      * 请求看房的状态
      */
-    private Integer status;
+    private Integer seeHouseStatus;
 }

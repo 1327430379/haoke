@@ -1,5 +1,7 @@
 package cn.haoke.mgmt.service;
 
+import cn.haoke.center.house.pojo.HouseResources;
+import cn.haoke.common.vo.RestResponse;
 import cn.haoke.mgmt.vo.HouseData;
 import cn.haoke.mgmt.vo.SearchResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -18,10 +20,10 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.stereotype.Service;
 
+import java.lang.annotation.Native;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,4 +103,17 @@ public class SearchService {
 
         return new SearchResult(housePage.getTotalPages(), housePage.getContent(),null);
     }
+    public RestResponse<HouseData> queryById(String id){
+        GetQuery searchQuery = new GetQuery();
+        searchQuery.setId(id);
+        HouseData houseData = elasticsearchTemplate.queryForObject(searchQuery, HouseData.class);
+        return new RestResponse<>(houseData);
+
+    }
+
+
+
+
+
+
 }

@@ -2,12 +2,18 @@ package cn.haoke.center.house.pojo;
 
 import cn.haoke.common.pojo.BasePojo;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @TableName(value = "hk_notice_message")
+@AllArgsConstructor
+@NoArgsConstructor
 public class NoticeMessageEo extends BasePojo {
 
 
@@ -29,21 +35,29 @@ public class NoticeMessageEo extends BasePojo {
     /***
      * 关联的数据id
      */
+    @JsonSerialize(using=ToStringSerializer.class)
     private Long dataId;
 
     /**
      * 目标用户Id
      */
+    @JsonSerialize(using=ToStringSerializer.class)
     private Long userId;
 
     /***
      * 发送者id
      */
+    @JsonSerialize(using= ToStringSerializer.class)
     private Long senderId;
 
     /***
      * 已读状态
      */
     private Integer readStatus;
+
+    /***
+     * 看房请求状态
+     */
+    private Integer seeHouseStatus;
 
 }

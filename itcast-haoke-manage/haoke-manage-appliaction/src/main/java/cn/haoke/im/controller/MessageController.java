@@ -2,15 +2,16 @@ package cn.haoke.im.controller;
 
 import cn.haoke.im.pojo.Message;
 import cn.haoke.im.service.MessageService;
+import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("imMessageController")
 @RequestMapping("message")
 @CrossOrigin
-public class MessageController extends AbstractBaseController{
+public class MessageController extends AbstractBaseController {
 
     @Autowired
     private MessageService messageService;

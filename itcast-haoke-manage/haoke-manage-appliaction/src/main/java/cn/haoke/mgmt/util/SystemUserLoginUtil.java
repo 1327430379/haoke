@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,30 +20,26 @@ import javax.servlet.http.HttpServletRequest;
 public class SystemUserLoginUtil {
     private static Logger logger = LoggerFactory.getLogger(SystemUserLoginUtil.class);
 
-    private static StringRedisTemplate redisTemplate;
+    private static RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public static StringRedisTemplate getRedisTemplate() {
-        return redisTemplate;
-    }
-
-    public static void setRedisTemplate(StringRedisTemplate redisTemplate) {
+    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
         SystemUserLoginUtil.redisTemplate = redisTemplate;
     }
 
-    public static SystemUserLoginInfoVo getLoginInfo(){
+    public static SystemUserLoginInfoVo getLoginInfo() {
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = req.getHeader("token");
-        if(StringUtils.isEmpty(token)){
-            token = req.getParameter("token");
+        String token = req.getHeader("authorization");
+        if (StringUtils.isEmpty(token)) {
+            token = req.getParameter("authorization");
         }
         //用户信息处理
         SystemUserLoginInfoVo infoVo = new SystemUserLoginInfoVo();
         String cacheInfo = redisTemplate.opsForValue().get(UserConstant.LOGIN_USER_CACHE_PRE + token);
-        if(StringUtils.isEmpty(cacheInfo)){
+        if (StringUtils.isEmpty(cacheInfo)) {
             return infoVo;
         }
-        infoVo = JSON.parseObject(cacheInfo,SystemUserLoginInfoVo.class);
+        infoVo = JSON.parseObject(cacheInfo, SystemUserLoginInfoVo.class);
         return infoVo;
     }
 

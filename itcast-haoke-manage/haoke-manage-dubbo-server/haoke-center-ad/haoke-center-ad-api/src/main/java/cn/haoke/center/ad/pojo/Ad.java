@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
-@TableName(value = "hk_ad")
+@TableName("tb_ad")
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ad extends BasePojo {

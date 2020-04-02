@@ -1,9 +1,9 @@
 package cn.haoke.mgmt.graphql;
 
+import cn.haoke.center.house.pojo.Ad;
 import cn.haoke.mgmt.service.AdService;
 import cn.haoke.mgmt.vo.ad.index.IndexAdResult;
 import cn.haoke.mgmt.vo.ad.index.IndexAdResultData;
-import cn.haoke.center.ad.pojo.Ad;
 import cn.haoke.common.vo.PageInfo;
 import graphql.schema.DataFetchingEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;

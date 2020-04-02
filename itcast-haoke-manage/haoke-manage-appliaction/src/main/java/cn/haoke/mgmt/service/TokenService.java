@@ -15,6 +15,13 @@ public class TokenService {
         if(StringUtils.isBlank(token)){
             return false;
         }
+        String[] split = token.split("_");
+        if(split.length<2){
+            return false;
+        }
+        if(!StringUtils.isNumeric(split[0])){
+            return false;
+        }
         return apiTokenService.checkToken(token);
     }
 }

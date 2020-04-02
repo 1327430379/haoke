@@ -1,5 +1,6 @@
 package cn.haoke.mgmt.controller;
 
+import cn.haoke.center.house.pojo.NoticeMessageEo;
 import cn.haoke.common.vo.RestResponse;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import cn.haoke.mgmt.service.NoticeMessageService;
@@ -19,7 +20,7 @@ public class NoticeMessageController extends AbstractBaseController {
     private NoticeMessageService noticeMessageService;
 
     @GetMapping
-    public RestResponse<List<NoticeMessageVo>> queryNoticeMessageList(){
-        return null;
+    public RestResponse<List<NoticeMessageEo>> queryNoticeMessageList(){
+        return noticeMessageService.queryNoticeMessageList();
     }
 }

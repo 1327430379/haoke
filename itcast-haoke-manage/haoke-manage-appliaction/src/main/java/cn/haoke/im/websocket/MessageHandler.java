@@ -1,17 +1,24 @@
 package cn.haoke.im.websocket;
 
-import cn.itcast.haoke.im.dao.MessageDAO;
-import cn.itcast.haoke.im.pojo.Message;
-import cn.itcast.haoke.im.pojo.UserData;
-import cn.itcast.haoke.im.service.SessionService;
+import cn.haoke.center.user.api.ApiUserService;
+import cn.haoke.center.user.pojo.UserEo;
+import cn.haoke.im.dao.MessageDAO;
+import cn.haoke.im.pojo.Message;
+import cn.haoke.im.pojo.User;
+import cn.haoke.im.pojo.User.UserBuilder;
+import cn.haoke.im.pojo.UserData;
+import cn.haoke.im.service.SessionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +34,7 @@ import java.util.Map;
 //        messageModel = MessageModel.BROADCASTING,
 //        consumerGroup = "haoke-im-group"
 //)
-public class MessageHandler extends TextWebSocketHandler  {
+public class MessageHandler extends TextWebSocketHandler {
 
     @Autowired
     private MessageDAO messageDAO;
@@ -35,12 +42,11 @@ public class MessageHandler extends TextWebSocketHandler  {
     @Autowired
     private SessionService sessionService;
 
+    @Reference(version = "1.0.0")
+    private ApiUserService apiUserService;
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final Map<Long, WebSocketSession> SESSIONS = new HashMap<>();
-//
-//    @Autowired
-//    private RocketMQTemplate rocketMQTemplate;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -57,13 +63,26 @@ public class MessageHandler extends TextWebSocketHandler  {
         JsonNode jsonNode = MAPPER.readTree(textMessage.getPayload());
         Long toId = jsonNode.get("toId").asLong();
         String msg = jsonNode.get("msg").asText();
+        Message message = new Message();
+        UserEo targetEo = apiUserService.queryById(toId).getData();
+        UserEo sendEo = apiUserService.queryById(uid).getData();
+        if (sendEo != null) {
+            User user = new User();
+            user.setId(sendEo.getId());
+            user.setUsername(StringUtils.isEmpty(sendEo.getName()) ? sendEo.getName() : sendEo.getUsername());
+            message.setFrom(user);
 
-        Message message = Message.builder()
-                .from(UserData.USER_MAP.get(uid))
-                .to(UserData.USER_MAP.get(toId))
-                .msg(msg)
-                .build();
-
+        }
+        if (targetEo != null) {
+            User user = new User();
+            user.setId(targetEo.getId());
+            user.setUsername(StringUtils.isEmpty(targetEo.getName()) ? targetEo.getName() : targetEo.getUsername());
+            message.setTo(user);
+        }
+        message.setMsg(msg);
+        message.setSendDate(new Date());
+        //未读状态
+        message.setStatus(1);
         // 将消息保存到MongoDB
         message = this.messageDAO.saveMessage(message);
 
@@ -76,10 +95,6 @@ public class MessageHandler extends TextWebSocketHandler  {
             toSession.sendMessage(new TextMessage(msgJson));
             // 更新消息状态为已读
             this.messageDAO.updateMessageState(message.getId(), 2);
-        }else{
-            // 该用户可能下线，可能在其他的节点中，发送消息到MQ系统
-            // 需求：添加tag，便于消费者对消息的筛选
-           // this.rocketMQTemplate.convertAndSend("haoke-im-send-message-topic:SEND_MSG", msgJson);
         }
 
     }

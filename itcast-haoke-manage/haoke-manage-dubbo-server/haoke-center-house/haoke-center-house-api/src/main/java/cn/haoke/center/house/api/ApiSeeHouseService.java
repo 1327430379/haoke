@@ -7,6 +7,13 @@ public interface ApiSeeHouseService {
 
 
     /***
+     * 添加看房请求
+     * @param requestEo 请求实体
+     * @return  RestResponse<Long>
+     */
+    RestResponse<Long> addRequest(SeeHouseRequestEo requestEo);
+
+    /***
      * 保存看房请求
      * @param requestEo
      * @return
@@ -27,4 +34,6 @@ public interface ApiSeeHouseService {
      * @return
      */
     RestResponse<SeeHouseRequestEo> queryById(Long id);
+
+
 }

@@ -3,6 +3,7 @@ package cn.haoke.center.user.pojo;
 import cn.haoke.common.pojo.BasePojo;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserEo extends BasePojo {
     /***
      * 用户名

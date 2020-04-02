@@ -5,12 +5,13 @@ import cn.haoke.im.pojo.Message;
 import cn.haoke.im.pojo.SessionEo;
 import cn.haoke.im.service.MessageService;
 import cn.haoke.im.service.SessionService;
+import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("imUserController")
 @CrossOrigin
 @RequestMapping("user")
 public class UserController extends AbstractBaseController {

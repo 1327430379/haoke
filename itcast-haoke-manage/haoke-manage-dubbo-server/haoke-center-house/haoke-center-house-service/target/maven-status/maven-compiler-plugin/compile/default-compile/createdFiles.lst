@@ -1,9 +1,9 @@
 cn\haoke\center\house\service\FangDongService.class
 cn\haoke\center\house\apiimpl\ApiFangDongServiceImpl.class
+cn\haoke\center\house\service\impl\FangDongServiceImpl.class
+cn\haoke\center\house\config\MybatisConfig.class
+cn\haoke\center\house\service\HouseResourcesService.class
 cn\haoke\center\house\DubboProvider.class
 cn\haoke\center\house\apiimpl\ApiHouseResourcesServiceImpl.class
-cn\haoke\center\house\service\impl\FangDongServiceImpl.class
 cn\haoke\center\house\service\impl\HouseResourcesServiceImpl.class
-cn\haoke\center\house\config\MybatisConfig.class
 cn\haoke\center\house\mapper\HouseResourcesMapper.class
-cn\haoke\center\house\service\HouseResourcesService.class

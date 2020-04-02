@@ -1,13 +1,13 @@
 package cn.haoke.im.service;
 
-import cn.itcast.haoke.im.dao.MessageDAO;
-import cn.itcast.haoke.im.pojo.Message;
+import cn.haoke.im.dao.MessageDAO;
+import cn.haoke.im.pojo.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("imMessageService")
 public class MessageService {
 
     @Autowired

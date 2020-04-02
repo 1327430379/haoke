@@ -196,9 +196,13 @@ public class IdUtils {
      */
     public static Long getLongId(){
         String nanoTime = getIncreaseIdByNanoTime();
-        String substring = nanoTime.substring(nanoTime.length() / 2 - 1, nanoTime.length());
+        String substring = nanoTime.substring(nanoTime.length() / 2 + 4, nanoTime.length());
         return Long.valueOf(substring);
     }
 
+    public static void main(String[] args) {
+        long maxValue = Long.MAX_VALUE;
+        System.out.println(getLongId());
+    }
 }
 

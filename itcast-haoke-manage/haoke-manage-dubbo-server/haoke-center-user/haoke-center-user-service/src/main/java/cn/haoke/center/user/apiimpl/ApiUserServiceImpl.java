@@ -4,24 +4,34 @@ import cn.haoke.center.user.api.ApiUserService;
 import cn.haoke.center.user.constants.CustomConstant;
 import cn.haoke.center.user.constants.UserConstant;
 import cn.haoke.center.user.constants.enums.RoleEnum;
+import cn.haoke.center.user.dto.LoginUserDto;
 import cn.haoke.center.user.dto.TokenDto;
 import cn.haoke.center.user.dto.UserSearchDto;
 import cn.haoke.center.user.mapper.UserMapper;
 import cn.haoke.center.user.pojo.UserEo;
 import cn.haoke.center.user.utils.TokenHelper;
 import cn.haoke.center.user.vo.UserVo;
+import cn.haoke.common.exception.BusinessException;
+import cn.haoke.common.utils.IdUtils;
 import cn.haoke.common.vo.RestResponse;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;
 
+import java.time.Duration;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,19 +43,15 @@ public class ApiUserServiceImpl implements ApiUserService {
     private UserMapper userMapper;
     @Autowired
     private TokenHelper tokenHelper;
+    @Autowired
+    private RedisTemplate<String,String> redisTemplate;
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public RestResponse<TokenDto> loginManageSystem(String loginCode, String password) {
+    public RestResponse<TokenDto> loginManageSystem(String loginCode, String password) throws BusinessException {
         UserEo user = userMapper.loginManageSystem(loginCode, password);
-        if (user == null) {
-            return new RestResponse<>(CustomConstant.ERROR_CODE, "账号密码有误！");
-        }
-        if (UserConstant.DISABLED.equals(user.getStatus())) {
-            return new RestResponse<>(CustomConstant.ERROR_CODE, "账号被禁用！");
-        }
-        if (RoleEnum.USER.getRole().equals(user.getRole())) {
-            return new RestResponse<>(CustomConstant.ERROR_CODE, "您没有权限登录此系统！");
-        }
+        validateUser(user);
         TokenDto token = tokenHelper.createToken(user.getId());
         return new RestResponse<>(token);
     }
@@ -74,5 +80,84 @@ public class ApiUserServiceImpl implements ApiUserService {
     @Override
     public RestResponse<UserEo> getUserById(Long id) {
         return new RestResponse<>(userMapper.selectById(id));
+    }
+
+    @Override
+    public RestResponse<LoginUserDto> loginApp(String username, String password) throws Exception {
+        UserEo userEo = UserEo.builder().username(username).password(password).build();
+        Wrapper<UserEo> wrapper = new QueryWrapper<>(userEo);
+        UserEo user = userMapper.selectOne(wrapper);
+        validateUser(user);
+        String userToken = redisTemplate.opsForValue().get(UserConstant.USER_TOKEN_PRE + user.getId());
+        boolean tokenExist = true;
+        if (StringUtils.isEmpty(userToken)) {
+            tokenExist = false;
+        }
+
+        TokenDto tokenDto = tokenHelper.createToken(user.getId());
+        LoginUserDto userDto = new LoginUserDto();
+        BeanUtils.copyProperties(user, userDto);
+        userDto.setUserId(user.getId());
+        userDto.setToken(tokenDto.getToken());
+
+        //先判断缓存中是否有缓存消息，没有则将用户信息保存到缓存中
+        if (!tokenExist) {
+            String userJson = objectMapper.writeValueAsString(userDto);
+            redisTemplate.opsForValue().set(UserConstant.LOGIN_USER_CACHE_PRE + userDto.getToken(), userJson, Duration.ofHours(1));
+            return new RestResponse<>(RestResponse.successCode, userDto);
+        }
+        return new RestResponse<>(userDto);
+
+    }
+
+    @Override
+    public RestResponse<UserEo> queryByUsername(String username) {
+        UserEo userEo = new UserEo();
+        userEo.setUsername(username);
+        Wrapper<UserEo> wrapper = new QueryWrapper<>(userEo);
+        UserEo resultEo = userMapper.selectOne(wrapper);
+        return new RestResponse<>(resultEo);
+    }
+
+    @Override
+    public RestResponse<Void> saveUser(UserEo userEo) {
+        Date date = new Date();
+        if (userEo.getId() != null) {
+            userEo.setUpdateTime(date);
+            userMapper.updateById(userEo);
+
+            return new RestResponse<>();
+        }
+        if (StringUtils.isEmpty(userEo.getRole())) {
+            userEo.setRole(RoleEnum.USER.getRole());
+        }
+
+        userEo.setId(IdUtils.getLongId());
+        userEo.setCreateTime(date);
+        userEo.setUpdateTime(date);
+        userMapper.insert(userEo);
+        return new RestResponse<>();
+    }
+
+    @Override
+    public RestResponse<UserEo> queryById(Long userId) {
+        return new RestResponse<>(userMapper.selectById(userId));
+    }
+
+    /***
+     * 生成token
+     * @param user
+     * @return
+     */
+    private void validateUser(UserEo user) throws BusinessException {
+        if (user == null) {
+            throw new BusinessException("账号密码有误！");
+        }
+        if (UserConstant.DISABLED.equals(user.getStatus())) {
+            throw new BusinessException("账号被禁用！");
+        }
+//        if (RoleEnum.USER.getRole().equals(user.getRole())) {
+//            throw new BusinessException("您没有权限登录此系统！");
+//        }
     }
 }

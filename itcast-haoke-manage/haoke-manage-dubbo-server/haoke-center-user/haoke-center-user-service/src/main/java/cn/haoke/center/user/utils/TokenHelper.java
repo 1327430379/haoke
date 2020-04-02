@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import static cn.haoke.center.user.constants.UserConstant.*;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +24,7 @@ public class TokenHelper {
         String token = UUID.randomUUID().toString().replace("-", "");
         token = String.valueOf(id) + "_" + token;
         TokenDto tokenDto = new TokenDto(id, token);
-        redisTemplate.opsForValue().set(USER_TOKEN_PRE + String.valueOf(id), token, USER_TOKEN_EXPIRE_TIME);
+        redisTemplate.opsForValue().set(USER_TOKEN_PRE + String.valueOf(id), token, Duration.ofHours(1));
         return tokenDto;
     }
 

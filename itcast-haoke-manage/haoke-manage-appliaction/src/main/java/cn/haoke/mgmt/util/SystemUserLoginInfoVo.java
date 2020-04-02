@@ -33,8 +33,5 @@ public class SystemUserLoginInfoVo {
      */
     private String role;
 
-    /***
-     * 功能集合
-     */
-    private List<FuncDto> funcList;
+
 }

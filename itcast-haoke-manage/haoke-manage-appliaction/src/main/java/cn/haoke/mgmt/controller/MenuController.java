@@ -24,4 +24,10 @@ public class MenuController extends AbstractBaseController {
         Object json = JsonUtils.readJsonFromClassPath("menu.json", Map.class);
         return new RestResponse(json);
     }
+
+    public static void main(String[] args) {
+        String msg = "13323";
+        String[] strings = msg.split(",");
+        System.out.println(strings.length);
+    }
 }

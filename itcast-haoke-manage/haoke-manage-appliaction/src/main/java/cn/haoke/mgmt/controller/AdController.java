@@ -1,9 +1,9 @@
 package cn.haoke.mgmt.controller;
 
+import cn.haoke.center.house.pojo.Ad;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import cn.haoke.mgmt.service.AdService;
 import cn.haoke.mgmt.vo.WebResult;
-import cn.haoke.center.ad.pojo.Ad;
 import cn.haoke.common.vo.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper extends BaseMapper<UserEo> {
 
 
-    @Select({"select u.* from hk_user u where 1=1" +
+    @Select({"select u.* from hk_user u where " +
             "password = #{password} and (username=#{loginCode} or mobile = #{loginCode})"})
     UserEo loginManageSystem(@Param("loginCode")String loginCode, @Param("password")String password);
 

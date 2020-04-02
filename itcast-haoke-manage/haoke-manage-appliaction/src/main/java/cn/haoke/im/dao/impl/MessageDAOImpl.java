@@ -1,7 +1,7 @@
 package cn.haoke.im.dao.impl;
 
-import cn.itcast.haoke.im.dao.MessageDAO;
-import cn.itcast.haoke.im.pojo.Message;
+import cn.haoke.im.dao.MessageDAO;
+import cn.haoke.im.pojo.Message;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;

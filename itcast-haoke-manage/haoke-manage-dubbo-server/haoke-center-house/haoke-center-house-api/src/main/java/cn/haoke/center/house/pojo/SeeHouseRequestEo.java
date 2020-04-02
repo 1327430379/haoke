@@ -21,7 +21,12 @@ public class SeeHouseRequestEo extends BasePojo {
     /***
      * 租客Id
      */
-    private String tenantId;
+    private Long tenantId;
+
+    /***
+     * 租客手机号码
+     */
+    private String tenantMobile;
 
     /***
      * 看房时间
@@ -31,12 +36,12 @@ public class SeeHouseRequestEo extends BasePojo {
     /***
      * 请求状态（ 0：待确认，1：待看房，2：已取消，3：已完成）
      */
-    private Integer requestStatus;
+    private Integer seeHouseStatus;
 
     /***
      * 房源Id
      */
-    private Long houseId;
+    private String houseId;
 
     /***
      * 房源名称
@@ -52,6 +57,16 @@ public class SeeHouseRequestEo extends BasePojo {
      * 完成时间
      */
     private Date finishedTime;
+
+    /***
+     * 房东id
+     */
+    private Long houseOwnerId;
+
+    /***
+     * 房东姓名
+     */
+    private String houseOwnerName;
 
 
 }

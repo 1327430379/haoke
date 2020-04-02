@@ -41,4 +41,32 @@ public class WebResult {
         map.put("msg",msg);
         return map;
     }
+    public void setMeta(Map map){
+        this.msg = (String) map.get("msg");
+        this.status = (Integer) map.get("status");
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public List<?> getList() {
+        return list;
+    }
+
+    public void setList(List<?> list) {
+        this.list = list;
+    }
 }

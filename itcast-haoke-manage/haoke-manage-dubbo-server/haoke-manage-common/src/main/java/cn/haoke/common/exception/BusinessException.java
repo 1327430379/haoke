@@ -1,6 +1,6 @@
 package cn.haoke.common.exception;
 
-public class BusinessException extends Exception{
+public class BusinessException extends RuntimeException{
 
     public BusinessException(){
 

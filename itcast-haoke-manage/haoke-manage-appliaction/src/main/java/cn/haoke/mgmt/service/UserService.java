@@ -5,6 +5,7 @@ import cn.haoke.center.user.dto.UserSearchDto;
 import cn.haoke.center.user.pojo.UserEo;
 import cn.haoke.center.user.vo.UserInfoCacheVo;
 import cn.haoke.common.vo.RestResponse;
+import cn.haoke.mgmt.dto.AppLoginDto;
 import cn.haoke.mgmt.dto.LoginReqDto;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.BeanUtils;
@@ -17,8 +18,8 @@ public class UserService {
     private ApiUserService apiUserService;
 
 
-    public RestResponse loginUser(LoginReqDto dto) {
-        if (dto.getLoginFlag().equals(1)) {
+    public RestResponse loginUser(LoginReqDto dto) throws Exception {
+        if (dto.getLoginFlag().equals("1")) {
             //登录后台
             return apiUserService.loginManageSystem(dto.getLoginCode(), dto.getPassword());
         } else {
@@ -46,4 +47,18 @@ public class UserService {
     }
 
 
+    public RestResponse loginApp(String username, String password) throws Exception {
+        return apiUserService.loginApp(username,password);
+    }
+
+    public RestResponse registerUser(AppLoginDto dto) {
+        UserEo data = apiUserService.queryByUsername(dto.getUsername()).getData();
+        if(data!=null){
+            return new RestResponse(RestResponse.failCode,"此用户名已存在！");
+        }
+        UserEo userEo = new UserEo();
+        userEo.setUsername(dto.getUsername());
+        userEo.setPassword(dto.getPassword());
+        return apiUserService.saveUser(userEo);
+    }
 }

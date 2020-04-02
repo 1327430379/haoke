@@ -29,6 +29,5 @@ public class ApiTokenServiceImpl implements ApiTokenService {
             return false;
         }
         return true;
-
     }
 }

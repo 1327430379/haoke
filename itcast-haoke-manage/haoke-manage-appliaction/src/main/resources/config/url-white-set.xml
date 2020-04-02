@@ -6,7 +6,10 @@
 
     <bean id="urlWhiteSet" class="cn.haoke.mgmt.interceptor.UrlWhiteSet">
         <property name="uriSet">
-            <set></set>
+            <set>
+                <value>/api/user/app/login</value>
+                <value>/api/user/login</value>
+            </set>
         </property>
     </bean>
 </beans>

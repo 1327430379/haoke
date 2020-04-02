@@ -13,7 +13,8 @@ import java.util.Map;
 public class MessageHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String path = request.getURI().getPath();
         String[] ss = StringUtils.split(path, '/');
         if(ss.length != 2){
