@@ -1,3 +1,5 @@
 /itcast-haoke-manage/
 /itcast-haoke-manage/itcast-haoke-manage-dubbo-server/
 /itcast-haoke-manage/itcast-haoke-manage-api-server/
+/target/
+*.iml
