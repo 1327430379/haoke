@@ -44,7 +44,7 @@ public class ApiUserServiceImpl implements ApiUserService {
     @Autowired
     private TokenHelper tokenHelper;
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -88,11 +88,11 @@ public class ApiUserServiceImpl implements ApiUserService {
         Wrapper<UserEo> wrapper = new QueryWrapper<>(userEo);
         UserEo user = userMapper.selectOne(wrapper);
         validateUser(user);
-        String userToken = redisTemplate.opsForValue().get(UserConstant.USER_TOKEN_PRE + user.getId());
-        boolean tokenExist = true;
-        if (StringUtils.isEmpty(userToken)) {
-            tokenExist = false;
-        }
+//        String userToken = redisTemplate.opsForValue().get(UserConstant.USER_TOKEN_PRE + user.getId());
+//        boolean tokenExist = true;
+//        if (StringUtils.isEmpty(userToken)) {
+//            tokenExist = false;
+//        }
 
         TokenDto tokenDto = tokenHelper.createToken(user.getId());
         LoginUserDto userDto = new LoginUserDto();
@@ -101,12 +101,13 @@ public class ApiUserServiceImpl implements ApiUserService {
         userDto.setToken(tokenDto.getToken());
 
         //先判断缓存中是否有缓存消息，没有则将用户信息保存到缓存中
-        if (!tokenExist) {
-            String userJson = objectMapper.writeValueAsString(userDto);
-            redisTemplate.opsForValue().set(UserConstant.LOGIN_USER_CACHE_PRE + userDto.getToken(), userJson, Duration.ofHours(1));
-            return new RestResponse<>(RestResponse.successCode, userDto);
-        }
-        return new RestResponse<>(userDto);
+        String userJson = objectMapper.writeValueAsString(userDto);
+        redisTemplate.opsForValue().set(UserConstant.LOGIN_USER_CACHE_PRE + userDto.getToken(), userJson, Duration.ofHours(1));
+        return new RestResponse<>(RestResponse.successCode, userDto);
+//        if (!tokenExist) {
+//
+//        }
+
 
     }
 
@@ -122,20 +123,17 @@ public class ApiUserServiceImpl implements ApiUserService {
     @Override
     public RestResponse<Void> saveUser(UserEo userEo) {
         Date date = new Date();
+        userEo.setUpdateTime(date);
         if (userEo.getId() != null) {
-            userEo.setUpdateTime(date);
             userMapper.updateById(userEo);
-
-            return new RestResponse<>();
         }
         if (StringUtils.isEmpty(userEo.getRole())) {
             userEo.setRole(RoleEnum.USER.getRole());
+            userEo.setId(IdUtils.getLongId());
+            userEo.setCreateTime(date);
+            userMapper.insert(userEo);
         }
 
-        userEo.setId(IdUtils.getLongId());
-        userEo.setCreateTime(date);
-        userEo.setUpdateTime(date);
-        userMapper.insert(userEo);
         return new RestResponse<>();
     }
 

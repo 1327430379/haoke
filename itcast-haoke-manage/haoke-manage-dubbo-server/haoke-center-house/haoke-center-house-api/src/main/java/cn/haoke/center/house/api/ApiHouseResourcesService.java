@@ -1,7 +1,12 @@
 package cn.haoke.center.house.api;
 
+import cn.haoke.center.house.dto.HouseResourceReqDto;
 import cn.haoke.center.house.pojo.HouseResources;
-import cn.haoke.common.vo.PageInfo;
+import cn.haoke.common.vo.RestResponse;
+import com.github.pagehelper.PageInfo;
+
+import java.util.List;
+import java.util.Map;
 
 public interface ApiHouseResourcesService {
 
@@ -21,20 +26,33 @@ public interface ApiHouseResourcesService {
      * @param queryCondition 查询条件
      * @return
      */
-    PageInfo<HouseResources> queryHouseResourcesList(int page, int pageSize,
-                                                     HouseResources queryCondition);
+    PageInfo<HouseResources> queryHouseResourcesList(Integer page, Integer pageSize,
+                                                     HouseResourceReqDto queryCondition);
 
     /**
      * 根据房源Id查找
      * @param id
      * @return
      */
-    HouseResources queryHouseResourceById(Long id);
+    HouseResources queryHouseResourceById(String id);
 
     /**
      * 更新房源数据
      * @param houseResources
      * @return
      */
-    boolean updateHouseResource(HouseResources houseResources);
+    void updateHouseResource(HouseResources houseResources);
+
+    /***
+     * 找出已租和未租的房源集合
+     * @param houseResources
+     * @return
+     */
+    Map queryByRentStatus(HouseResources houseResources);
+
+    /**
+     * 删除房源
+     * @param id
+     */
+    void deleteById(String id);
 }

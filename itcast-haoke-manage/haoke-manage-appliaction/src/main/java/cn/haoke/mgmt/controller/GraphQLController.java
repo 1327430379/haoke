@@ -1,7 +1,6 @@
 package cn.haoke.mgmt.controller;
 
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
