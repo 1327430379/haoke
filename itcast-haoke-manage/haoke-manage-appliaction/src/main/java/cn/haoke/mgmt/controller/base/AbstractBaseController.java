@@ -9,7 +9,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.BindException;
 import java.util.List;
@@ -76,5 +81,21 @@ public class AbstractBaseController {
             return objectError.getDefaultMessage();
         }
         return MSG_SYSTEM_ERROR;
+    }
+
+    /***
+     * 返回前端错误
+     * @param errorCode
+     * @param errorMsg
+     */
+    public void error(int errorCode,String errorMsg)  {
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        assert response != null;
+        response.setStatus(errorCode);
+        try {
+            response.getWriter().println(errorMsg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
