@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @TableName(value = "hk_notice_message")
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class NoticeMessageEo extends BasePojo {
 
 

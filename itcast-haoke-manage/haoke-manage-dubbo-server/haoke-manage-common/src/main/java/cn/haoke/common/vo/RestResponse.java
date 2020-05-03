@@ -9,12 +9,16 @@ public class RestResponse<T> implements Serializable {
     private T data;
     public static final int successCode = 200;
     public static final int failCode = 500;
-    public static final RestResponse SUCCESS = new RestResponse<>(successCode);
+    public static final RestResponse<Void> SUCCESS = new RestResponse<>(successCode);
     public static final RestResponse<Void> VOID = new RestResponse<>();
+    public static final RestResponse<Void> FAIL = new RestResponse(failCode);
     public RestResponse() {
         this.resultCode = successCode;
     }
 
+    public RestResponse(int resultCode){
+        this.resultCode = resultCode;
+    }
     public RestResponse(T data) {
         this.resultCode = successCode;
         this.resultMsg = "success";

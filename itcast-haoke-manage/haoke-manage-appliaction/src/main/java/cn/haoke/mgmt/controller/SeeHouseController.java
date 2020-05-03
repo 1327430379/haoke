@@ -1,10 +1,11 @@
 package cn.haoke.mgmt.controller;
 
+import cn.haoke.center.house.dto.SeeHouseReqDto;
 import cn.haoke.center.house.pojo.SeeHouseRequestEo;
-import cn.haoke.common.vo.PageInfo;
 import cn.haoke.common.vo.RestResponse;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import cn.haoke.mgmt.service.SeeHouseService;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,5 +35,11 @@ public class SeeHouseController  extends AbstractBaseController {
     @PostMapping("/add")
     public RestResponse<Long> addSeeHouseRequest(@RequestBody SeeHouseRequestEo eo){
         return seeHouseService.addSeeHouseRequest(eo);
+    }
+    @GetMapping("/list")
+    public RestResponse<PageInfo> listByPage(@RequestParam(value = "pageNum",required = false,defaultValue = "1")Integer pageNum,
+                                             @RequestParam(value = "pageSize",required = false,defaultValue = "10")Integer pageSize,
+                                             SeeHouseReqDto dto){
+        return seeHouseService.listByPage(pageNum,pageSize);
     }
 }

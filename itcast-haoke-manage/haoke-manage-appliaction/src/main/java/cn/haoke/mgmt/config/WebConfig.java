@@ -9,19 +9,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private LoginInterceptor loginInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
-    }
+//    @Autowired
+//    private LoginInterceptor loginInterceptor;
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
+//    }
     @Bean
     public ServletRegistrationBean restServlet(){
         //注解扫描上下文

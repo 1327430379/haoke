@@ -63,7 +63,7 @@ public class UserController extends AbstractBaseController {
     }
 
     @PostMapping("/addSession")
-    public RestResponse<Void> addSession(@RequestBody SessionEo sessionEo) {
+    public RestResponse addSession(@RequestBody SessionEo sessionEo) {
         return sessionService.addSession(sessionEo);
     }
 

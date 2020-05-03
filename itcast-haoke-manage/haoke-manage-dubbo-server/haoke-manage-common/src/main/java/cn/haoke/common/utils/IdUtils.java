@@ -74,6 +74,10 @@ public class IdUtils {
         return DigestUtils.md5Hex(UUID.randomUUID().toString());
     }
 
+    public static void main(String[] args) {
+        System.out.println(getRandomIdByUUID());
+    }
+
     /* ---------------------------------------------分割线------------------------------------------------ */
 
     /**
@@ -200,9 +204,5 @@ public class IdUtils {
         return Long.valueOf(substring);
     }
 
-    public static void main(String[] args) {
-        long maxValue = Long.MAX_VALUE;
-        System.out.println(getLongId());
-    }
 }
 

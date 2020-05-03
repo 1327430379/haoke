@@ -1,20 +1,30 @@
 package cn.haoke.center.house.service.impl;
 
+import cn.haoke.center.house.mapper.HouseResourcesMapper;
+import cn.haoke.common.exception.BusinessException;
 import cn.haoke.common.service.BaseServiceImpl;
 import cn.haoke.center.house.pojo.HouseResources;
-import cn.haoke.common.vo.PageInfo;
 import cn.haoke.center.house.service.HouseResourcesService;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
 @Service
-public class HouseResourcesServiceImpl extends BaseServiceImpl<HouseResources> implements HouseResourcesService {
+public class HouseResourcesServiceImpl implements HouseResourcesService {
+
+    @Autowired
+    private HouseResourcesMapper houseResourcesMapper;
 
     /**
      * @param houseResources
@@ -24,37 +34,45 @@ public class HouseResourcesServiceImpl extends BaseServiceImpl<HouseResources> i
     public int saveHouseResources(HouseResources houseResources) {
 
         // 添加校验或者是其他的一些逻辑
-
         if (StringUtils.isBlank(houseResources.getTitle())) {
             // 不符合要求
             return -1;
         }
-
-        return super.save(houseResources);
+        if (houseResources.getHouseOwnerId() == null) {
+            throw new BusinessException("房东信息不能为空！");
+        }
+        //添加
+        return houseResourcesMapper.insert(houseResources);
     }
 
     @Override
-    public PageInfo<HouseResources> queryHouseResourcesList(int page, int pageSize, HouseResources queryCondition) {
+    public PageInfo<HouseResources> queryHouseResourcesList(Integer pageNum, Integer pageSize, HouseResources queryCondition) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        if (pageNum != null && pageSize != null) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+
+        QueryWrapper<HouseResources> queryWrapper = new QueryWrapper();
 
         // 根据数据的更新时间做倒序排序
         queryWrapper.orderByDesc("update_time");
+        List<HouseResources> list = houseResourcesMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            list = new ArrayList<>();
+        }
 
-        IPage iPage = super.queryPageList(queryWrapper, page, pageSize);
-
-        return new PageInfo<HouseResources>(Long.valueOf(iPage.getTotal()).intValue(), page, pageSize, iPage.getRecords());
+        return new PageInfo<>(list);
     }
 
     @Override
-    public HouseResources queryHouseResourceById(Long id) {
-       return super.queryById(id);
+    public HouseResources queryHouseResourceById(String id) {
+        return houseResourcesMapper.selectById(id);
 
     }
 
     @Override
     public boolean updateHouseResource(HouseResources houseResources) {
-        return super.update(houseResources)==1;
+        return houseResourcesMapper.updateById(houseResources) == 1;
     }
 
     @Override
@@ -62,7 +80,8 @@ public class HouseResourcesServiceImpl extends BaseServiceImpl<HouseResources> i
         // 根据数据的更新时间做倒序排序
         HouseResources houseResources = new HouseResources();
         houseResources.setHouseOwnerId(fangDongId);
-        return super.queryListByWhere(houseResources);
+        Wrapper<HouseResources> wrapper = new QueryWrapper<>(houseResources);
+        return houseResourcesMapper.selectList(wrapper);
     }
 
 }

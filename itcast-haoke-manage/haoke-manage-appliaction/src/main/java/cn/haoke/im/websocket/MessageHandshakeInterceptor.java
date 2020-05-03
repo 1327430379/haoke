@@ -17,13 +17,13 @@ public class MessageHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String path = request.getURI().getPath();
         String[] ss = StringUtils.split(path, '/');
-        if(ss.length != 2){
+        if(ss.length != 3){
             return false;
         }
-        if(!StringUtils.isNumeric(ss[1])){ //是否为数字
+        if(!StringUtils.isNumeric(ss[2])){ //是否为数字
             return false;
         }
-        attributes.put("uid", Long.valueOf(ss[1]));
+        attributes.put("uid", Long.valueOf(ss[2]));
         return true;
     }
 

@@ -1,11 +1,17 @@
 package cn.haoke.mgmt.controller;
 
+import cn.haoke.center.user.dto.UserDto;
 import cn.haoke.center.user.dto.UserSearchDto;
+import cn.haoke.center.user.pojo.UserEo;
+import cn.haoke.common.constants.CommonConstant;
+import cn.haoke.common.exception.BusinessException;
 import cn.haoke.common.vo.RestResponse;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
 import cn.haoke.mgmt.dto.AppLoginDto;
 import cn.haoke.mgmt.dto.LoginReqDto;
 import cn.haoke.mgmt.service.UserService;
+import cn.haoke.mgmt.util.SystemUserLoginInfoVo;
+import cn.haoke.mgmt.util.SystemUserLoginUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -74,18 +80,32 @@ public class UserController extends AbstractBaseController {
 //        return userService.getTenantDetail(id);
 //    }
 
-    @GetMapping("/currentUser")
-    public Map<String,Object> currentUser(){
-        Map<String,Object> data = new HashMap<>();
-        data.put("name","lingzan");
-        data.put("avatar","https://i0.hdslb.com/bfs/face/950e091db191c2415c05cde9c10a3c02f58ed25c.jpg@150w_150h.jpg");
-        return data;
+    /***
+     * 得到当前登录用户的信息
+     * @return
+     */
+    @GetMapping("/app/current")
+    public RestResponse<UserEo> currentUser(){
+
+        SystemUserLoginInfoVo loginInfo = SystemUserLoginUtil.getLoginInfo();
+        if(loginInfo==null){
+            throw new BusinessException(CommonConstant.LOGIN_SESSION_DISABLES);
+        }
+        return userService.queryById(loginInfo.getUserId());
     }
 
 
     @PostMapping("/register")
     public RestResponse registerUser(@RequestBody AppLoginDto dto){
         return userService.registerUser(dto);
+    }
+
+    @PutMapping("/update")
+    public RestResponse<Void> updateUser(@RequestBody UserEo userEo){
+        if(userEo.getId()==null){
+            return new RestResponse<>(RestResponse.failCode,"用户Id不能为空！");
+        }
+        return userService.updateUser(userEo);
     }
 
 

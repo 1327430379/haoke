@@ -1,9 +1,16 @@
 package cn.haoke.center.house.pojo;
 
 import cn.haoke.common.pojo.BasePojo;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -15,34 +22,33 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("hk_house_resources")
-public class HouseResources extends BasePojo {
+public class HouseResources implements Serializable {
 
-    private static final long serialVersionUID = 779152022777511825L;
+    /***
+     * 房源标题
+     */
+    @TableId(type = IdType.INPUT)
+    private String id;
+
+    /***
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
+    private Date createTime;
+
+    /***
+     * 更新时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
+
 
     /**
      * 房源标题
      */
     private String title;
 
-    /**
-     * 楼盘id
-     */
-    private Long estateId;
-
-    /**
-     * 楼号（栋）
-     */
-    private String buildingNum;
-
-    /**
-     * 单元号
-     */
-    private String buildingUnit;
-
-    /**
-     * 门牌号
-     */
-    private String buildingFloorNum;
 
     /**
      * 租金
@@ -55,24 +61,14 @@ public class HouseResources extends BasePojo {
     private Integer rentMethod;
 
     /**
-     * 支付方式，1-付一押一，2-付三押一，3-付六押一，4-年付押一，5-其它
-     */
-    private Integer paymentMethod;
-
-    /**
      * 户型，如：2室1厅1卫
      */
     private String houseType;
 
-    /**
-     * 建筑面积
+    /***
+     * 地址
      */
-    private String coveredArea;
-
-    /**
-     * 使用面积
-     */
-    private String useArea;
+    private String houseAddress;
 
     /**
      * 楼层，如：8/26
@@ -82,22 +78,13 @@ public class HouseResources extends BasePojo {
     /**
      * 朝向：东、南、西、北
      */
-    private String orientation;
+    private Integer orientation;
 
-    /**
-     * 装修，1-精装，2-简装，3-毛坯
-     */
-    private Integer decoration;
-
-    /**
-     * 配套设施， 如：1,2,3
-     */
-    private String facilities;
 
     /**
      * 图片，最多5张
      */
-    private String pic;
+    private String image;
 
     /**
      * 描述
@@ -119,15 +106,36 @@ public class HouseResources extends BasePojo {
      */
     private Integer time;
 
-    /**
-     * 物业费
-     */
-    private String propertyCost;
 
     /***
      * 房东id
      */
     private Long houseOwnerId;
+
+    /***
+     * 房东姓名
+     */
+    private String houseOwnerName;
+
+    /***
+     * 审核状态（0：未审核，1：审核通过，2：审核未通过）
+     */
+    private Integer checkStatus;
+
+    /**
+     * 租赁状态(0:未出租，1:已出租，2：到期)
+     */
+    private Integer rentStatus;
+
+    /**
+     * 装修，1-精装，2-简装，3-毛坯
+     */
+    private Integer decoration;
+
+    /***
+     * 配套设施
+     */
+    private String facilities;
 
 
 }

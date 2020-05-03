@@ -1,7 +1,7 @@
 package cn.haoke.center.house.service;
 
 import cn.haoke.center.house.pojo.HouseResources;
-import cn.haoke.common.vo.PageInfo;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -14,9 +14,16 @@ public interface HouseResourcesService {
      */
     int saveHouseResources(HouseResources houseResources);
 
-    PageInfo<HouseResources> queryHouseResourcesList(int page, int pageSize, HouseResources queryCondition);
+    /***
+     * 分页查询
+     * @param pageNum
+     * @param pageSize
+     * @param queryCondition
+     * @return
+     */
+    PageInfo<HouseResources> queryHouseResourcesList(Integer pageNum, Integer pageSize, HouseResources queryCondition);
 
-    HouseResources queryHouseResourceById(Long id);
+    HouseResources queryHouseResourceById(String id);
 
     /***
      * 更新房源数据

@@ -1,7 +1,7 @@
 package cn.haoke.mgmt.controller;
 
-import cn.haoke.mgmt.config.MockConfig;
 import cn.haoke.mgmt.controller.base.AbstractBaseController;
+import cn.haoke.mgmt.config.MockConfig;
 import cn.haoke.mgmt.vo.WebResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

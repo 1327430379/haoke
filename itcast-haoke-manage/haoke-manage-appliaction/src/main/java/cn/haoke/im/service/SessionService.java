@@ -1,8 +1,11 @@
 package cn.haoke.im.service;
 
+import cn.haoke.center.user.api.ApiUserService;
+import cn.haoke.center.user.pojo.UserEo;
 import cn.haoke.common.exception.BusinessException;
 import cn.haoke.common.vo.RestResponse;
 import cn.haoke.im.pojo.SessionEo;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,15 +25,31 @@ public class SessionService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public RestResponse<Void> addSession(SessionEo sessionEo) {
+    @Reference(version = "1.0.0")
+    private ApiUserService apiUserService;
+
+    /***
+     * 添加会话
+     * @param sessionEo
+     * @return
+     */
+    public RestResponse addSession(SessionEo sessionEo) {
 
         if (sessionEo.getUserId() == null || sessionEo.getTargetId() == null) {
             throw new BusinessException("用户id或目标用户id不能为空！");
         }
+        if(sessionEo.getUserId().equals(sessionEo.getTargetId())){
+            throw new BusinessException("您就是房东哦！");
+        }
         SessionEo data = this.getSession(sessionEo.getUserId(), sessionEo.getTargetId()).getData();
         if (data != null) {
-            throw new BusinessException("会话已存在，请勿重复添加！");
+            return new RestResponse("会话已存在！");
         }
+        //查出房东信息
+        UserEo userEo = apiUserService.queryById(sessionEo.getTargetId()).getData();
+        sessionEo.setTargetName(!StringUtils.isEmpty(userEo.getName())?userEo.getName():userEo.getUsername());
+        sessionEo.setAvatar(userEo.getAvatar());
+        sessionEo.setMobile(userEo.getMobile());
         Date date = new Date();
         sessionEo.setBeginTime(date);
         sessionEo.setIsClose(0);

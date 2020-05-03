@@ -6,14 +6,11 @@ import cn.haoke.mgmt.service.SearchService;
 import cn.haoke.mgmt.vo.HouseData;
 import cn.haoke.mgmt.vo.SearchResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.lucene.util.CollectionUtil;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,6 @@ import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -46,6 +42,12 @@ public class SearchController extends AbstractBaseController {
     private RedisTemplate redisTemplate;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+
+    @RequestMapping(value = "/get",method = RequestMethod.POST)
+    public RestResponse<Void> search(){
+        return new RestResponse<>();
+    }
 
     @GetMapping
     public SearchResult search(@RequestParam("keyword") String keyword,

@@ -43,7 +43,7 @@ public class UserEo extends BasePojo {
     /***
      * 性别
      */
-    private String gender;
+    private Integer gender;
 
     /***
      * 姓名
@@ -89,6 +89,11 @@ public class UserEo extends BasePojo {
      * 身份证号码
      */
     private String idcardNumber;
+
+    /***
+     * 学历：
+     */
+    private Integer education;
 
 }
 
