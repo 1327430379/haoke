@@ -1,6 +1,8 @@
 package cn.haoke.mgmt.controller;
 
 import cn.haoke.center.house.dto.HouseResourceReqDto;
+import cn.haoke.center.user.constants.enums.RoleEnum;
+import cn.haoke.center.user.pojo.UserEo;
 import cn.haoke.common.constants.CommonConstant;
 import cn.haoke.common.constants.enums.ExceptionCode;
 import cn.haoke.common.exception.BusinessException;
@@ -53,11 +55,11 @@ public class HouseResourcesController extends AbstractBaseController {
      */
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody HouseResources houseResources) {
-        SystemUserLoginInfoVo loginInfo = SystemUserLoginUtil.getCurrentLoginInfo();
+        UserEo loginInfo = SystemUserLoginUtil.getCurrentLoginInfo();
         if(loginInfo==null){
             houseResources.setHouseOwnerId(CommonConstant.DEFAULT_USER_ID);
         }else{
-            houseResources.setHouseOwnerId(loginInfo.getUserId());
+            houseResources.setHouseOwnerId(loginInfo.getId());
         }
 
         try {
@@ -85,16 +87,30 @@ public class HouseResourcesController extends AbstractBaseController {
                                                     defaultValue = "1") Integer currentPage,
                                           @RequestParam(name = "pageSize",required = false,
                                                     defaultValue = "10") Integer pageSize) {
+
         if(dto==null){
             dto = new HouseResourceReqDto();
         }
-        SystemUserLoginInfoVo loginInfo = SystemUserLoginUtil.getLoginInfo();
-        if(null ==loginInfo){
-            //throw new BusinessException(CommonConstant.LOGIN_SESSION_DISABLES);
-            dto.setHouseOwnerId(CommonConstant.DEFAULT_USER_ID);
-        }else{
-            dto.setHouseOwnerId(loginInfo.getUserId());
+        UserEo userEo = SystemUserLoginUtil.getCurrentLoginInfo();
+        if(userEo==null){
+            throw new BusinessException("登录信息失效，请重新登录！");
         }
+        if(!RoleEnum.ADMIN.equals(userEo.getRole())){
+            dto.setHouseOwnerId(userEo.getId());
+        }
+//        if(null ==loginInfo){
+//            //throw new BusinessException(CommonConstant.LOGIN_SESSION_DISABLES);
+//            dto.setHouseOwnerId(CommonConstant.DEFAULT_USER_ID);
+//        }else{
+//            dto.setHouseOwnerId(loginInfo.getUserId());
+//        }
+//        SystemUserLoginInfoVo loginInfo = SystemUserLoginUtil.getLoginInfo();
+//        if(null ==loginInfo){
+//            //throw new BusinessException(CommonConstant.LOGIN_SESSION_DISABLES);
+//            dto.setHouseOwnerId(CommonConstant.DEFAULT_USER_ID);
+//        }else{
+//            dto.setHouseOwnerId(loginInfo.getUserId());
+//        }
        // houseResources.setHouseOwnerId(loginInfo.getUserId());
         PageInfo<HouseResources> pageInfo = houseResourcesService.queryList(dto, currentPage, pageSize);
         Pagination pagination = new Pagination(pageInfo.getPageNum(),pageInfo.getPageSize(),pageInfo.getTotal());

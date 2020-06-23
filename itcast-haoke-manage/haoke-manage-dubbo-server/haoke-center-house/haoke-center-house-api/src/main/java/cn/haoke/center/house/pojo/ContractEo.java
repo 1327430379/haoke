@@ -20,10 +20,10 @@ public class ContractEo extends BasePojo {
      */
     private Integer contractStatus;
 
-    /***
-     * 房源地址
+    /**
+     * 合同详细信息
      */
-    private String houseAddress;
+    private String contractContent;
 
     /***
      * 房源名称
@@ -33,10 +33,10 @@ public class ContractEo extends BasePojo {
     /***
      * 房源id
      */
-    private Long houseId;
+    private String houseId;
 
     /***
-     * 房源Id
+     * 房东Id
      */
     private Long ownerId;
 
@@ -54,6 +54,11 @@ public class ContractEo extends BasePojo {
      * 租客姓名
      */
     private String customerName;
+
+    /**
+     * 租客手机号
+     */
+    private String customerMobile;
 
     /***
      * 结束时间

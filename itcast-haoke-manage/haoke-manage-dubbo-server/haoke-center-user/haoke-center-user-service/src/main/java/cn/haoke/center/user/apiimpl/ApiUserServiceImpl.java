@@ -49,10 +49,12 @@ public class ApiUserServiceImpl implements ApiUserService {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public RestResponse<TokenDto> loginManageSystem(String loginCode, String password) throws BusinessException {
+    public RestResponse<TokenDto> loginManageSystem(String loginCode, String password) {
         UserEo user = userMapper.loginManageSystem(loginCode, password);
         validateUser(user);
         TokenDto token = tokenHelper.createToken(user.getId());
+        //保存用户会话到redis
+        redisTemplate.opsForValue().set(UserConstant.LOGIN_USER_MGMT_CACHE_PRE, JSON.toJSONString(user), Duration.ofHours(1));
         return new RestResponse<>(token);
     }
 
@@ -64,14 +66,18 @@ public class ApiUserServiceImpl implements ApiUserService {
         }
         //先查出所有用户
         UserEo userEo = new UserEo();
+        BeanUtils.copyProperties(dto,userEo);
         userEo.setStatus(UserConstant.ENABLED);
-        QueryWrapper<UserEo> wrapper = new QueryWrapper<>(userEo);
+        QueryWrapper<UserEo> wrapper = new QueryWrapper<>();
         if (StringUtils.isNotEmpty(dto.getName())) {
             wrapper.like("name", "%" + dto.getName() + "%");
+            userEo.setName(null);
         }
         if (StringUtils.isNotEmpty(dto.getMobile())) {
             wrapper.like("mobile", "%" + dto.getMobile() + "%");
+            userEo.setMobile(null);
         }
+        wrapper.setEntity(userEo);
         List<UserEo> userEos = userMapper.selectList(wrapper);
         PageInfo<UserEo> pageInfo = new PageInfo<>(userEos);
         return new RestResponse<>(pageInfo);
@@ -87,7 +93,12 @@ public class ApiUserServiceImpl implements ApiUserService {
         UserEo userEo = UserEo.builder().username(username).password(password).build();
         Wrapper<UserEo> wrapper = new QueryWrapper<>(userEo);
         UserEo user = userMapper.selectOne(wrapper);
-        validateUser(user);
+        if (user == null) {
+            throw new BusinessException("账号密码有误！");
+        }
+        if (UserConstant.DISABLED.equals(user.getStatus())) {
+            throw new BusinessException("账号被禁用！");
+        }
 //        String userToken = redisTemplate.opsForValue().get(UserConstant.USER_TOKEN_PRE + user.getId());
 //        boolean tokenExist = true;
 //        if (StringUtils.isEmpty(userToken)) {
@@ -142,20 +153,41 @@ public class ApiUserServiceImpl implements ApiUserService {
         return new RestResponse<>(userMapper.selectById(userId));
     }
 
+    @Override
+    public RestResponse<PageInfo<UserEo>> queryList(UserSearchDto dto) {
+
+        UserEo eo = new UserEo();
+        BeanUtils.copyProperties(dto, eo);
+        QueryWrapper<UserEo> wrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(dto.getName())) {
+            wrapper.like("name", "%" + eo.getName() + "%");
+            eo.setName(null);
+        }
+        if (StringUtils.isNotBlank(dto.getMobile())) {
+            wrapper.like("mobile", "%" + eo.getMobile() + "%");
+        }
+        if (dto.getPageNum() != null && dto.getPageSize() != null) {
+            PageHelper.startPage(dto.getPageNum(),dto.getPageSize());
+        }
+        wrapper.setEntity(eo);
+        List<UserEo> userEos = userMapper.selectList(wrapper);
+        return new RestResponse<>(new PageInfo<>(userEos));
+    }
+
     /***
      * 生成token
      * @param user
      * @return
      */
-    private void validateUser(UserEo user) throws BusinessException {
+    private void validateUser(UserEo user) {
         if (user == null) {
             throw new BusinessException("账号密码有误！");
         }
         if (UserConstant.DISABLED.equals(user.getStatus())) {
             throw new BusinessException("账号被禁用！");
         }
-//        if (RoleEnum.USER.getRole().equals(user.getRole())) {
-//            throw new BusinessException("您没有权限登录此系统！");
-//        }
+        if (RoleEnum.USER.getRole().equals(user.getRole())) {
+            throw new BusinessException("您没有权限登录此系统！");
+        }
     }
 }

@@ -4,6 +4,7 @@ import cn.haoke.center.user.api.ApiUserService;
 import cn.haoke.center.user.pojo.UserEo;
 import cn.haoke.im.dao.MessageDAO;
 import cn.haoke.im.pojo.Message;
+import cn.haoke.im.pojo.SessionEo;
 import cn.haoke.im.pojo.User;
 import cn.haoke.im.pojo.User.UserBuilder;
 import cn.haoke.im.pojo.UserData;
@@ -13,7 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -41,6 +44,8 @@ public class MessageHandler extends TextWebSocketHandler {
 
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Reference(version = "1.0.0")
     private ApiUserService apiUserService;
@@ -79,6 +84,11 @@ public class MessageHandler extends TextWebSocketHandler {
             user.setUsername(StringUtils.isEmpty(targetEo.getName()) ? targetEo.getName() : targetEo.getUsername());
             message.setTo(user);
         }
+        //查询对方与自己是否有建立会话，没有则建立 会话
+        SessionEo sessionEo = sessionService.getSession(targetEo.getId(), sendEo.getId()).getData();
+        if(sessionEo == null){
+            addSession(targetEo,sendEo);
+        }
         message.setMsg(msg);
         message.setSendDate(new Date());
         //未读状态
@@ -96,6 +106,16 @@ public class MessageHandler extends TextWebSocketHandler {
             // 更新消息状态为已读
             this.messageDAO.updateMessageState(message.getId(), 2);
         }
+
+    }
+    private void addSession(UserEo sendEo,UserEo targetEo){
+        SessionEo sessionEo = new SessionEo();
+        sessionEo.setUserId(sendEo.getId());
+        sessionEo.setUserName(StringUtils.isEmpty(sendEo.getName()) ? sendEo.getName() : sendEo.getUsername());
+        sessionEo.setTargetId(targetEo.getId());
+        sessionEo.setTargetName(StringUtils.isEmpty(targetEo.getName()) ? targetEo.getName() : targetEo.getUsername());
+        sessionEo.setBeginTime(new Date());
+        mongoTemplate.insert(sessionEo);
 
     }
 

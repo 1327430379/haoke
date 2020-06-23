@@ -41,4 +41,19 @@ public class ApiNoticeMessageServiceImpl implements ApiNoticeMessageService {
         Wrapper<NoticeMessageEo> wrapper = new QueryWrapper<>(eo);
         return new RestResponse<>(noticeMessageMapper.selectList(wrapper));
     }
+
+    @Override
+    public RestResponse<NoticeMessageEo> queryById(Long id) {
+        NoticeMessageEo messageEo = noticeMessageMapper.selectById(id);
+        return new RestResponse<>(messageEo);
+    }
+
+    @Override
+    public RestResponse<Void> updateSeeHouseStatus(Long id, Integer seeHouseStatus) {
+        NoticeMessageEo eo = new NoticeMessageEo();
+        eo.setId(id);
+        eo.setSeeHouseStatus(seeHouseStatus);
+        noticeMessageMapper.updateById(eo);
+        return RestResponse.VOID;
+    }
 }

@@ -89,9 +89,9 @@ public class ApiSeeHouseServiceImpl implements ApiSeeHouseService {
     }
 
     @Override
-    public RestResponse<PageInfo> listByPage(Integer pageNum, Integer pageSize, Long userId) {
+    public RestResponse<PageInfo> listByPage(Integer pageNum, Integer pageSize, SeeHouseRequestEo eo) {
         PageHelper.startPage(pageNum,pageSize);
-        List<SeeHouseRecordVo> vos = seeHouseRequestMapper.queryList(userId);
+        List<SeeHouseRecordVo> vos = seeHouseRequestMapper.queryList(eo);
         PageInfo<SeeHouseRecordVo> pageInfo = new PageInfo<>(vos);
         return new RestResponse<>(pageInfo);
     }

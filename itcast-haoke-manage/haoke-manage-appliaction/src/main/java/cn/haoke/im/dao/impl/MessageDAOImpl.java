@@ -49,7 +49,7 @@ public class MessageDAOImpl implements MessageDAO {
 
         Criteria criteria = new Criteria().orOperator(criteriaFrom, criteriaTo);
 
-        PageRequest pageRequest = PageRequest.of(page - 1, rows, Sort.by(Sort.Direction.ASC, "sendDate"));
+        PageRequest pageRequest = PageRequest.of(page - 1, rows, Sort.by(Sort.Direction.DESC, "sendDate"));
 
         // 设置查询条件，分页
         Query query = Query.query(criteria).with(pageRequest);

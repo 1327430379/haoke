@@ -16,7 +16,7 @@ public interface ApiUserService {
      * @param password
      * @return
      */
-    RestResponse<TokenDto> loginManageSystem(String loginCode, String password) throws Exception;
+    RestResponse<TokenDto> loginManageSystem(String loginCode, String password) ;
 
 
     /***
@@ -59,4 +59,11 @@ public interface ApiUserService {
      * @return
      */
     RestResponse<UserEo> queryById(Long userId);
+
+    /***
+     * 分页查找用户
+     * @param dto
+     * @return
+     */
+    RestResponse<PageInfo<UserEo>> queryList(UserSearchDto dto);
 }

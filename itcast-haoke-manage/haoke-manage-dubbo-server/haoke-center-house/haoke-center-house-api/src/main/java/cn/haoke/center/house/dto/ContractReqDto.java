@@ -14,10 +14,6 @@ public class ContractReqDto implements Serializable {
      */
     private Integer contractStatus;
 
-    /***
-     * 房源地址
-     */
-    private String houseAddress;
 
     /***
      * 房源名称

@@ -1,5 +1,6 @@
 package cn.haoke.mgmt.controller;
 
+import cn.haoke.center.user.dto.TokenDto;
 import cn.haoke.center.user.dto.UserDto;
 import cn.haoke.center.user.dto.UserSearchDto;
 import cn.haoke.center.user.pojo.UserEo;
@@ -12,6 +13,7 @@ import cn.haoke.mgmt.dto.LoginReqDto;
 import cn.haoke.mgmt.service.UserService;
 import cn.haoke.mgmt.util.SystemUserLoginInfoVo;
 import cn.haoke.mgmt.util.SystemUserLoginUtil;
+import cn.haoke.mgmt.vo.TableResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,20 +37,30 @@ public class UserController extends AbstractBaseController {
     @PostMapping("/login")
     public Map<String,Object> loginUser(@RequestBody @Valid LoginReqDto dto){
 
+
         Map<String,Object> data = new HashMap<>();
         if(StringUtils.equals(dto.getLoginCode(),"admin")&&StringUtils.equals(dto.getPassword(),"123456")){
             data.put("status","ok");
             data.put("currentAuthority","admin");
             return data;
         }
-
-        if(StringUtils.equals(dto.getLoginCode(),"user")&&StringUtils.equals(dto.getPassword(),"123456")){
+        TokenDto tokenDto = userService.loginUser(dto).getData();
+        if(tokenDto!=null && tokenDto.getToken()!=null){
             data.put("status","ok");
-            data.put("currentAuthority","user");
-            return data;
+            data.put("currentAuthority","houseOwner");
+            data.put("data",tokenDto);
+        }else{
+            data.put("status","error");
+            data.put("errorMsg","用户信息有误！");
         }
-        data.put("status","error");
-        data.put("errorMsg","用户不存在！");
+
+//        if(StringUtils.equals(dto.getLoginCode(),"user")&&StringUtils.equals(dto.getPassword(),"123456")){
+//            data.put("status","ok");
+//            data.put("currentAuthority","user");
+//            return data;
+//        }
+//        data.put("status","error");
+//        data.put("errorMsg","用户不存在！");
         return data;
 
 
@@ -65,20 +77,20 @@ public class UserController extends AbstractBaseController {
      * @return RestResponse
      */
     @PostMapping("/list")
-    public RestResponse getUserList(@RequestBody UserSearchDto dto){
+    public RestResponse<TableResult> getUserList(@RequestBody UserSearchDto dto){
         return userService.getUserList(dto);
     }
 
-//
-//    /**
-//     * 租客详情
-//     * @param id 用户id
-//     * @return RestResponse
-//     */
-//    @GetMapping("/tenant/detail/{id}")
-//    public RestResponse getTenantDetail(@PathVariable Long id){
-//        return userService.getTenantDetail(id);
-//    }
+
+    /**
+     * 租客详情
+     * @param id 用户id
+     * @return RestResponse
+     */
+    @GetMapping("/{id}")
+    public RestResponse<UserEo> queryUserDtail(@PathVariable Long id){
+        return userService.queryById(id);
+    }
 
     /***
      * 得到当前登录用户的信息

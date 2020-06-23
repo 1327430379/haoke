@@ -93,7 +93,7 @@ public class MockController extends AbstractBaseController {
             case 3:
                 json= this.mockConfig.getInfosList3();break;
         }
-        return handleData(json);
+        return handleData2(json);
     }
 
     /**
@@ -120,5 +120,18 @@ public class MockController extends AbstractBaseController {
         webResult.setMeta(metaMap);
         return webResult;
     }
-
+    private WebResult handleData2(String json){
+        Map map = null;
+        try {
+            map = objectMapper.readValue(json, Map.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map dataMap = (Map) map.get("data");
+        Map metaMap = (Map) map.get("meta");
+        Map listMap = (Map) dataMap.get("list");
+        WebResult webResult = WebResult.ok((List<?>) listMap.get("data"));
+        webResult.setMeta(metaMap);
+        return webResult;
+    }
 }

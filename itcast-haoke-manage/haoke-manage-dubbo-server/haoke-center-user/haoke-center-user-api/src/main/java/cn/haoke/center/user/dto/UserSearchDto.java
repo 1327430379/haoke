@@ -17,6 +17,11 @@ public class UserSearchDto implements Serializable {
      */
     private String mobile;
 
+    /***
+     * 角色
+     */
+    private String role;
+
     private Integer pageNum;
 
     private Integer pageSize;

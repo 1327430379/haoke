@@ -6,6 +6,8 @@ import cn.haoke.center.house.vo.SeeHouseRecordVo;
 import cn.haoke.common.vo.RestResponse;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 public interface ApiSeeHouseService {
 
 
@@ -49,10 +51,10 @@ public interface ApiSeeHouseService {
      * 分页查询看房请求
      * @param pageNum 页码
      * @param pageSize 页大小
-     * @param userId 用户id
+     * @param eo
      * @return
      */
-    RestResponse<PageInfo> listByPage(Integer pageNum,Integer pageSize,Long userId);
+    RestResponse<PageInfo> listByPage(Integer pageNum,Integer pageSize,SeeHouseRequestEo eo);
 
 
     /***
@@ -70,4 +72,5 @@ public interface ApiSeeHouseService {
      * @return
      */
     RestResponse<Void> deleteSeeHouseRequest(Long id);
+
 }
